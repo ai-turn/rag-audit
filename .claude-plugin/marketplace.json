@@ -1,0 +1,15 @@
+{
+  "name": "rag-audit-marketplace",
+  "owner": {
+    "name": "ai-turn"
+  },
+  "plugins": [
+    {
+      "name": "rag-audit",
+      "source": "./plugins/rag-audit",
+      "description": "Linter-style structural audit for RAG pipelines. Rule-ID findings with file:line evidence, concrete fixes, and a deterministic 0-100 structure score. LangChain first-class, generic fallback for any stack.",
+      "category": "development",
+      "keywords": ["rag", "retrieval", "llm", "audit", "langchain", "evaluation", "observability"]
+    }
+  ]
+}
