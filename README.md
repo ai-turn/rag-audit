@@ -1,5 +1,10 @@
 # rag-audit
 
+[![version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fai-turn%2Frag-audit%2Fmain%2Fplugins%2Frag-audit%2F.claude-plugin%2Fplugin.json&query=%24.version&label=version&color=blue)](plugins/rag-audit/.claude-plugin/plugin.json)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](https://code.claude.com/docs/en/plugins)
+[![rules](https://img.shields.io/badge/rules-30-informational)](plugins/rag-audit/skills/rag-audit/references/rules.md)
+[![license](https://img.shields.io/github/license/ai-turn/rag-audit)](LICENSE)
+
 RAG 파이프라인용 린터. Claude Code 플러그인입니다.
 
 코드를 읽고 30개 규칙으로 점검해서, 어디가 왜 문제인지 `file:line`으로 짚고 0~100점 구조 점수를 매깁니다. 점수는 LLM의 감이 아니라 공개된 공식으로 계산합니다.
