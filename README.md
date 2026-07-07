@@ -1,9 +1,11 @@
-# rag-audit
+<h1 align="center">rag-audit</h1>
 
-[![version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fai-turn%2Frag-audit%2Fmain%2Fplugins%2Frag-audit%2F.claude-plugin%2Fplugin.json&query=%24.version&label=version&color=blue)](plugins/rag-audit/.claude-plugin/plugin.json)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](https://code.claude.com/docs/en/plugins)
-[![rules](https://img.shields.io/badge/rules-30-informational)](plugins/rag-audit/skills/rag-audit/references/rules.md)
-[![license](https://img.shields.io/github/license/ai-turn/rag-audit)](LICENSE)
+<p align="center">
+  <a href="plugins/rag-audit/.claude-plugin/plugin.json"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fai-turn%2Frag-audit%2Fmain%2Fplugins%2Frag-audit%2F.claude-plugin%2Fplugin.json&query=%24.version&label=version&color=blue&style=flat-square" alt="version"></a>
+  <a href="https://code.claude.com/docs/en/plugins"><img src="https://img.shields.io/badge/Claude%20Code-plugin-d97757?style=flat-square" alt="Claude Code plugin"></a>
+  <a href="plugins/rag-audit/skills/rag-audit/references/rules.md"><img src="https://img.shields.io/badge/rules-30-informational?style=flat-square" alt="rules 30"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/ai-turn/rag-audit?style=flat-square" alt="license"></a>
+</p>
 
 RAG 파이프라인용 린터. Claude Code 플러그인입니다.
 
