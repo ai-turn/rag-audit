@@ -26,6 +26,7 @@ These exist because LLM-generated reviews tend to be inconsistent between runs a
 4. **State the static limits.** The report must say plainly: this audit checks structure, not measured answer quality. A structurally clean pipeline can still retrieve garbage, and only measurement can tell.
 5. **Report language follows the user.** Write the report in the language the user is speaking (Korean user → Korean report). Rule IDs, severity labels, and code stay in English.
 6. **Read-only.** Never modify the target repository during the audit. Present fixes as snippets/diffs inside the report; apply them only if the user asks afterward.
+7. **Terse output.** Everything you say lives inside the report template — no narration while auditing, no essay after it. Detail is severity-proportional: CRITICAL/WARN findings get three lines each, INFO findings one line, coverage one line per verdict class. A typical single-pipeline report fits on one screen; extra length is a defect, not thoroughness.
 
 ## Workflow
 
@@ -73,21 +74,16 @@ Severity defaults are in the catalog. Escalate or downgrade only with a stated, 
 
 ### Step 5 — Score and write the report
 
-Compute the Structure Score (overall and per category) from the verdicts, exactly as specified in the Scoring section of `references/rules.md` — show the arithmetic honestly, no judgment adjustments. Then write the report.
+Compute the Structure Score (overall and per category) from the verdicts, exactly as specified in the Scoring section of `references/rules.md` — no judgment adjustments. Then write the report.
 
-ALWAYS use this exact template:
+ALWAYS use this exact template, and write nothing outside it:
 
 ```markdown
-# RAG Audit Report — <target>
+# RAG Audit — <target>
 
-## Summary
-<3–5 sentences: detected stack, overall pipeline shape, and the 2–3 findings
-that matter most.>
-
-## Score
-
-**Structure Score: <N>/100** — computed per the formula in rules.md; measures
-structural readiness (lower bound while UNKNOWNs remain), not answer quality.
+**Structure Score: <N>/100** · <X> CRITICAL / <Y> WARN / <Z> INFO · determined <d>/28
+<one line: stack, pipeline shape, and the 2–3 rule IDs to fix first.
+If UNKNOWN > 0, append: "score reads as a lower bound.">
 
 | Category | Score | PASS / FINDING / UNKNOWN (N/A excluded) |
 |---|---|---|
@@ -98,39 +94,38 @@ structural readiness (lower bound while UNKNOWNs remain), not answer quality.
 | O · Observability | | |
 | V · Evaluation readiness | | |
 
-Severity counts: <X> CRITICAL / <Y> WARN / <Z> INFO · determined <d>/<total> rules
-<If any severity was escalated or downgraded (e.g., R003 → CRITICAL), list it
-here with the reason — weights follow the applied severity.>
+<only if a severity was escalated/downgraded (e.g., R003 → CRITICAL): one line with the reason>
 
-## Pipeline Inventory
-<the table from Step 3>
+## Inventory
+<the table from Step 3 — a few words per cell, no sentences>
 
 ## Findings
-<sorted CRITICAL → WARN → INFO. For each:>
+<sorted CRITICAL → WARN → INFO>
 
-### [SEVERITY] RAG-X000 · <rule title>
-- **Evidence:** `path/file.py:41` — <one-line quote or tight paraphrase>
-- **Why it matters here:** <1–2 sentences tied to THIS codebase, not generic theory>
-- **Fix:** <concrete snippet or diff in the project's own framework and language>
+<CRITICAL and WARN: exactly this three-line shape —>
+### [SEVERITY] RAG-X000 · <rule title> — `path/file.py:41`
+<one sentence: what the code does and why that hurts THIS codebase>
+**Fix:** <one line; a snippet (≤5 lines) only when exact wording matters, e.g. prompt text>
 
-## Passed / N/A / Unknown
-<one line per remaining rule, e.g. "RAG-C002 PASS — MarkdownHeaderTextSplitter
-in ingest.py:18". This section proves full coverage.>
+<INFO: exactly one line each —>
+- [INFO] RAG-X000 <title> — `file:line` · Fix: <half a line>
 
-## Limits of this audit
-<static-analysis disclaimer per Principle 4>
+## Coverage
+PASS: RAG-C003 (ingest.py:24) · RAG-R001 (k=4) · <...>
+N/A: RAG-R006 (single-turn) · <...>
+UNKNOWN: RAG-E003 (no index metadata found) · <...>
 
 ## Measure next
-<2–3 concrete first steps toward measuring answer quality, chosen from what
-failed above. Typical ladder: (1) if RAG-O001 failed, log retrieved chunks with
-each request — nothing else is possible without this; (2) build a 50-question
-golden set from real user queries, including unanswerable ones; (3) add one
-claim-level faithfulness check on top. Keep it short and actionable.>
+<up to 3 one-line steps toward measuring answer quality, chosen from what failed —
+typical ladder: chunk logging (O001) → 50-question golden set incl. unanswerable
+(V001/V004) → one claim-level faithfulness check (V003).>
+<one closing sentence per Principle 4: this audit checks structure — answer
+quality itself only shows up in measurement.>
 ```
 
 ### Step 6 — Offer follow-up
 
-Offer to (a) apply specific fixes, (b) deep-dive one finding, or (c) scaffold the evaluation pieces from "Measure next". Do not start fixing unprompted.
+One line, at most: offer to apply a fix, deep-dive a finding, or scaffold "Measure next". Do not start fixing unprompted.
 
 ## Reference files
 

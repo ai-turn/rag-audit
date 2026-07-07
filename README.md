@@ -8,10 +8,9 @@
 Structure Score: 48/100 (C 31 · E 100 · R 36 · P 50 · O 0 · V 50)
 2 CRITICAL / 8 WARN / 5 INFO · determined 28/28 rules
 
-[CRITICAL] RAG-P003 · 답변 불가 처리 없음
-- Evidence: prompts/system.txt:1 — 컨텍스트 부족 시 지시 부재
-- Why: 근거가 없어도 모델이 답변을 지어냄 (환각의 프롬프트 측 절반)
-- Fix: "컨텍스트에 답이 없으면 '문서에서 확인되지 않습니다'라고 답하세요" 추가
+[CRITICAL] RAG-P003 · 답변 불가 처리 없음 — prompts/system.txt:1
+근거가 없어도 모델이 지어서 답함 (환각의 프롬프트 측 절반)
+Fix: "컨텍스트에 답이 없으면 '문서에서 확인되지 않습니다'라고 답하세요" 한 줄 추가
 ```
 
 ## 증상으로 찾아보기

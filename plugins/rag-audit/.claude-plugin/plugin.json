@@ -2,7 +2,7 @@
   "name": "rag-audit",
   "displayName": "RAG Audit",
   "description": "Structural audit (linter) for RAG pipelines: detects the stack, inventories the pipeline, reports rule-ID findings with evidence and fixes, and computes a deterministic 0-100 structure score from the rule verdicts.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "ai-turn"
   },
