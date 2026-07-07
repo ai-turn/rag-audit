@@ -81,7 +81,7 @@ ALWAYS use this exact template, and write nothing outside it:
 ```markdown
 # RAG Audit — <target>
 
-**Structure Score: <N>/100** · <X> CRITICAL / <Y> WARN / <Z> INFO · determined <d>/28
+**Structure Score: <N>/100** · <X> CRITICAL / <Y> WARN / <Z> INFO · determined <d>/30
 <one line: stack, pipeline shape, and the 2–3 rule IDs to fix first.
 If UNKNOWN > 0, append: "score reads as a lower bound.">
 

@@ -23,7 +23,7 @@ Search for imports from `langchain_text_splitters` (py) / `@langchain/textsplitt
 - E002 in LangChain is almost always a *two-file* bug: the ingestion script constructs its own embeddings object, the server constructs another. Compare model names/params across both. Also check `Chroma(persist_directory=..., embedding_function=...)` / `FAISS.load_local(...)` calls — a persisted index built by an older script with a different model is a silent E002/E003.
 - Index metadata rarely records the model in LangChain projects; if nothing pins it (config file, collection metadata), flag [E003].
 
-## Retrieval [R001–R006]
+## Retrieval [R001–R008]
 
 Primary surface: `vectorstore.as_retriever(search_type=..., search_kwargs={...})`.
 
@@ -33,7 +33,9 @@ Primary surface: `vectorstore.as_retriever(search_type=..., search_kwargs={...})
 - Reranking [R004]: `ContextualCompressionRetriever` wrapping `CohereRerank`, `CrossEncoderReranker`, or `FlashrankRerank`. Note: `LLMChainExtractor` inside compression is extraction, not reranking — it doesn't satisfy R004 by itself.
 - Filters [R005]: `search_kwargs={"filter": ...}` or store-specific filter params. Metadata exists on chunks but no filter anywhere → FINDING.
 - Multi-turn [R006]: PASS signals are `create_history_aware_retriever(...)`, a condense-question step (standalone-question prompt), or legacy `ConversationalRetrievalChain` (it condenses internally). A chat app that embeds the latest user message directly → FINDING.
-- Bonus context (report as inventory notes, not rules): `MultiQueryRetriever`, `ParentDocumentRetriever`, `SelfQueryRetriever` — each changes how C/R rules should be read (e.g., ParentDocumentRetriever means retrieval-chunk size ≠ context-chunk size).
+- Query preprocessing [R007]: any of `MultiQueryRetriever`, a rewrite/cleanup prompt before retrieval, a HyDE-style generate-then-embed step, or the R006 condense step → PASS. `retriever.invoke(raw_user_input)` with none of these anywhere → FINDING.
+- Fusion [R008]: `EnsembleRetriever` fuses with weighted RRF internally → PASS. A hand-rolled merge that sums BM25 scores with cosine similarities → FINDING. No hybrid at all → N/A.
+- Bonus context (report as inventory notes, not rules): `ParentDocumentRetriever`, `SelfQueryRetriever` — each changes how C/R rules should be read (e.g., ParentDocumentRetriever means retrieval-chunk size ≠ context-chunk size).
 
 ## Prompt & Generation [P001–P006]
 
@@ -42,7 +44,7 @@ Find the prompt: `ChatPromptTemplate.from_messages([...])`, `PromptTemplate(...)
 - Context assembly: `create_stuff_documents_chain(llm, prompt)` joins docs into `{context}`; manual LCEL often does `"\n\n".join(d.page_content for d in docs)`. Bare concatenation with no delimiters/tags around the context block → [P001].
 - Read the system/template text directly for grounding wording [P002], insufficient-context handling [P003], and citation instructions [P004]. These are judged on the prompt *text*, not on which chain class is used.
 - Token guard [P005]: look for `trim_messages`, manual token counting (`tiktoken`, `get_num_tokens`), or max-doc caps before assembly. `k × chunk_size` plus unbounded `ChatMessageHistory` with no trimming → FINDING.
-- Ordering [P006]: docs usually flow in retriever score order (best-first), which PASSES. A FINDING needs evidence of shuffling/reversing, or long contexts where known-best chunks land mid-sequence.
+- Ordering [P006]: docs usually flow in retriever score order (best-first), which PASSES; `LongContextReorder` (edge-first reordering) is an explicit PASS. A FINDING needs evidence of shuffling/reversing, or long contexts where known-best chunks land mid-sequence.
 - Legacy `RetrievalQA(chain_type=...)`: `"stuff"` is the common case (audit the stuff prompt); `map_reduce`/`refine` change P005/P006 dynamics — note it in the inventory.
 
 ## Observability [O001–O004]

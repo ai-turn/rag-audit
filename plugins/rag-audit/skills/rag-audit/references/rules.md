@@ -1,4 +1,4 @@
-# RAG Audit Rule Catalog — v0.1
+# RAG Audit Rule Catalog — v0.2
 
 Rules are framework-agnostic: they name *concepts*, not APIs. The adapter files map each concept to framework-specific code. Every audit evaluates every rule, in this order.
 
@@ -16,10 +16,10 @@ The report includes a **Structure Score (0–100)**, computed mechanically from 
 - `PASS` earns the rule's weight; `FINDING` and `UNKNOWN` earn 0; `N/A` rules are excluded from the calculation entirely
 - **Score = round(100 × earned weight ÷ total weight of all non-N/A rules)**
 - Compute a per-category score with the same formula within each category — that is what shows *where* the pipeline is weak
-- Always report determination coverage alongside (e.g., "determined 24/28"); since UNKNOWN earns 0, the score is a lower bound when UNKNOWNs exist
+- Always report determination coverage alongside (e.g., "determined 26/30"); since UNKNOWN earns 0, the score is a lower bound when UNKNOWNs exist
 - Interpretation guide: 90+ structurally solid · 60–89 fix findings top-down · below 60 fundamental gaps
 
-Contents: C Chunking & Ingestion (C001–C005) · E Embedding (E001–E003) · R Retrieval (R001–R006) · P Prompt & Generation (P001–P006) · O Observability (O001–O004) · V Evaluation readiness (V001–V004)
+Contents: C Chunking & Ingestion (C001–C005) · E Embedding (E001–E003) · R Retrieval (R001–R008) · P Prompt & Generation (P001–P006) · O Observability (O001–O004) · V Evaluation readiness (V001–V004)
 
 ---
 
@@ -89,9 +89,9 @@ Contents: C Chunking & Ingestion (C001–C005) · E Embedding (E001–E003) · R
 
 ### RAG-R002 · No relevance threshold
 - **Severity:** WARN
-- **Check:** pipeline always passes top-k to the prompt regardless of similarity score; no score cutoff or emptiness handling.
+- **Check:** pipeline always passes top-k to the prompt regardless of relevance; no score cutoff, no LLM relevance-judgment step on the retrieved chunks, and no emptiness handling.
 - **Why:** when the corpus has no answer, top-k still returns the *least irrelevant* chunks, and the model will confabulate from them. This is the retrieval half of hallucination (the prompt half is P003).
-- **Fix:** apply a score threshold or an emptiness check; route "nothing relevant" to an explicit no-answer path.
+- **Fix:** apply a score threshold, an emptiness check, or an LLM relevance gate (judge retrieved chunks against the question before generation — costs one extra call per request); route "nothing relevant" to an explicit no-answer path.
 
 ### RAG-R003 · Dense-only retrieval
 - **Severity:** WARN (escalate to CRITICAL if the corpus is heavy with IDs, product codes, error strings, or proper nouns)
@@ -117,6 +117,19 @@ Contents: C Chunking & Ingestion (C001–C005) · E Embedding (E001–E003) · R
 - **Why:** the follow-up alone carries almost no retrievable signal; retrieval quality craters from turn 2 onward — a top complaint pattern in production chatbots.
 - **Fix:** condense (history + follow-up) into a standalone query before retrieval, or use a history-aware retriever.
 - **N/A when:** the application is genuinely single-turn.
+
+### RAG-R007 · No query preprocessing for retrieval
+- **Severity:** INFO
+- **Check:** the raw user utterance is embedded/searched verbatim — no cleanup, no multi-query expansion, no hypothetical-answer (HyDE) step, and no condensation anywhere before retrieval.
+- **Why:** raw utterances carry filler and phrasing noise that dilute vector similarity, and a single formulation gambles recall on one wording. Cleanup, expansion, and HyDE each cover a different miss mode.
+- **Fix:** start with query cleanup; add multi-query expansion or HyDE only where recall measurably lags — each variant adds latency and tokens, and HyDE can mislead on niche corpora. No specific technique is required; the finding is having no strategy at all.
+
+### RAG-R008 · Hybrid scores fused by raw arithmetic
+- **Severity:** WARN
+- **Check:** lexical and dense results merged by adding or averaging raw scores. BM25 scores and cosine similarities live on different scales.
+- **Why:** one leg silently dominates and the hybrid stops doing its job — ranking drifts toward whichever score scale happens to be larger, and nothing errors.
+- **Fix:** fuse by rank, not by score: RRF (Reciprocal Rank Fusion) or a normalized weighted ensemble. Store-native hybrid modes and LangChain's `EnsembleRetriever` already fuse this way.
+- **N/A when:** retrieval is single-leg (no hybrid — that territory is R003's).
 
 ---
 
@@ -156,7 +169,7 @@ Contents: C Chunking & Ingestion (C001–C005) · E Embedding (E001–E003) · R
 - **Severity:** INFO
 - **Check:** chunks placed in arbitrary or worst-relevance-first order.
 - **Why:** models attend more reliably to the beginning and end of long contexts ("lost in the middle"); burying the best chunk mid-context wastes it.
-- **Fix:** place highest-relevance chunks first (or first and last when the context is long).
+- **Fix:** place highest-relevance chunks first; in long contexts, reorder so the best chunks sit at both edges (1·3·5·…·4·2) instead of leaving them buried mid-sequence.
 
 ---
 

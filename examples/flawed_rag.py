@@ -9,15 +9,17 @@ MUST-FIND (each of these appears as a FINDING):
   C001 overlap=0 · C002 CharacterTextSplitter on Markdown sources ·
   C004 char-sized chunks on a Korean corpus · E001 English-only embedding
   model on Korean text · R002 no threshold / emptiness check ·
-  R003 dense-only retrieval · R004 k=8 with no rerank · P001 bare concat
-  prompt · P002 no grounding instruction · P003 no unanswerable handling ·
+  R003 dense-only retrieval · R004 k=8 with no rerank · R007 raw question
+  embedded verbatim, no query strategy · P001 bare concat prompt ·
+  P002 no grounding instruction · P003 no unanswerable handling ·
   P004 metadata present but no citation instruction · O001 retrieved chunks
   not logged · O002 no tracing
 
 MUST-NOT-FIND (never reported as a FINDING):
   C003 loader metadata preserved -> PASS · E002 same embeddings object for
   index & query -> PASS · R001 k=8 is not an extreme -> PASS · P006 chunks
-  in best-first score order -> PASS · R006 single-turn by design -> N/A
+  in best-first score order -> PASS · R006 single-turn by design -> N/A ·
+  R008 no hybrid leg -> N/A
 """
 
 from langchain_community.document_loaders import DirectoryLoader

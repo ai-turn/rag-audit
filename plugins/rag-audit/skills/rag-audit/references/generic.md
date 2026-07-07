@@ -10,7 +10,7 @@ Search (ripgrep/grep, case-insensitive) per stage. Vector-DB client calls are th
 - **Chunking:** `chunk`, `split`, `overlap`, `splitter`, `window`, `stride`. Read the function to get size/overlap and the unit (chars vs tokens) [C001, C002, C004].
 - **Embedding:** `embed`, `embedding`, `encode(`, model-name strings (`text-embedding`, `bge-`, `e5`, `MiniLM`, `sentence-transformers`). Compare the ingestion-side and query-side call sites [E001, E002].
 - **Retrieval params:** `top_k`, `topK`, `limit`, `k=`, `score_threshold`, `min_score`, `similarity`, `alpha` (hybrid weight), `rerank`, `bm25`, `keyword` [R001–R005].
-- **Query rewriting:** `condense`, `rewrite`, `standalone`, `history` near the retrieval call [R006].
+- **Query rewriting:** `condense`, `rewrite`, `standalone`, `history`, `expand`, `multi_query`, `hyde`, `variant` near the retrieval call [R006, R007].
 - **Prompt:** files/strings containing `context`, `참고`, `문서`, system-prompt files (`*.txt`, `*.md`, `prompts/` dirs, YAML prompt keys). Judge P001–P006 on the actual template text.
 - **Observability:** `langfuse`, `langsmith`, `opentelemetry`, `otel`, `trace`, `span`, `logger` near retrieval/generation. Verify chunk IDs/scores are actually recorded, not just "retrieved N docs" [O001].
 - **Evaluation:** `eval`, `golden`, `testset`, `dataset`, `ragas`, `judge` in code, CI configs (`.github/workflows`), and docs [V001–V003].
@@ -18,7 +18,7 @@ Search (ripgrep/grep, case-insensitive) per stage. Vector-DB client calls are th
 ## Interpreting hand-rolled code
 
 - A raw SQL/HTTP similarity query with `LIMIT N` is the retrieval stage; N is k [R001]. A `WHERE score > x` or post-filter loop is the threshold [R002].
-- Hybrid in custom stacks often appears as *two* queries (one FTS/BM25, one vector) merged in application code — the merge function is the fusion step [R003].
+- Hybrid in custom stacks often appears as *two* queries (one FTS/BM25, one vector) merged in application code — the merge function is the fusion step [R003]. Read that merge: raw-score addition or averaging across the two legs → [R008] FINDING; rank-based fusion (RRF) → R008 PASS.
 - Prompt assembly by f-string/`+` concatenation is common; judge delimiting [P001] on the final assembled string, and look for any token counting before the LLM call [P005].
 
 ## Honesty requirements for this adapter
