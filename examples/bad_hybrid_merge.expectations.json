@@ -1,0 +1,7 @@
+{
+  "target": "examples/bad_hybrid_merge.py",
+  "must_find": [
+    "RAG-R008"
+  ],
+  "must_not_find": []
+}

@@ -20,7 +20,7 @@ One audit report (exact template in Step 5) containing:
 
 These exist because LLM-generated reviews tend to be inconsistent between runs and confident without evidence. The rules below are what make this audit trustworthy:
 
-1. **Evidence or silence.** Every finding cites `file:line` (or a config key / dependency entry). If you cannot point at code, do not report the finding — mark the rule `UNKNOWN` instead. Never infer a violation from what code "probably" does.
+1. **Evidence or silence.** Every finding cites `file:line`, a config key / dependency entry, or `NOT FOUND: <searched paths/patterns>` for absence findings. If you cannot point at code or a bounded failed search, do not report the finding — mark the rule `UNKNOWN` instead. Never infer a violation from what code "probably" does.
 2. **Full rule coverage.** Evaluate every rule in `references/rules.md`, in catalog order, every time. Each rule ends in exactly one state: `PASS`, `FINDING`, `N/A` (one-line reason), or `UNKNOWN` (could not determine). Forced coverage is what keeps two runs of this audit consistent with each other.
 3. **Scores are computed, never felt.** The only score in the report is the Structure Score defined in `references/rules.md`: a deterministic, severity-weighted PASS ratio over the rule verdicts. Never adjust the number by impression, and never output any other rating (letter grades, stars, per-finding points). Label it honestly: structural readiness — a lower bound when UNKNOWNs exist — not measured answer quality.
 4. **State the static limits.** The report must say plainly: this audit checks structure, not measured answer quality. A structurally clean pipeline can still retrieve garbage, and only measurement can tell.
@@ -64,7 +64,7 @@ Locate each stage and record evidence. Important: ingestion code frequently live
 | Observability | | tracing, chunk logging, feedback capture |
 | Evaluation | | golden set, CI evals, scoring |
 
-`NOT FOUND` is a legitimate value — record it rather than guessing. The inventory is built first precisely so that findings are grounded in a map of the code, not in impressions.
+`NOT FOUND` is a legitimate value — record the searched paths/patterns rather than guessing. The inventory is built first precisely so that findings are grounded in a map of the code, not in impressions.
 
 ### Step 4 — Apply the rules
 
@@ -81,7 +81,7 @@ ALWAYS use this exact template, and write nothing outside it:
 ```markdown
 # RAG Audit — <target>
 
-**Structure Score: <N>/100** · <X> CRITICAL / <Y> WARN / <Z> INFO · determined <d>/30
+**Structure Score: <N>/100** · <X> CRITICAL / <Y> WARN / <Z> INFO · determined <d>/<total>
 <one line: stack, pipeline shape, and the 2–3 rule IDs to fix first.
 If UNKNOWN > 0, append: "score reads as a lower bound.">
 
@@ -103,7 +103,7 @@ If UNKNOWN > 0, append: "score reads as a lower bound.">
 <sorted CRITICAL → WARN → INFO>
 
 <CRITICAL and WARN: exactly this three-line shape —>
-### [SEVERITY] RAG-X000 · <rule title> — `path/file.py:41`
+### [SEVERITY] RAG-X000 · <rule title> — `path/file.py:41` or `NOT FOUND: eval/golden`
 <one sentence: what the code does and why that hurts THIS codebase>
 **Fix:** <one line; a snippet (≤5 lines) only when exact wording matters, e.g. prompt text>
 

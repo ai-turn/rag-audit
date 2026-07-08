@@ -13,7 +13,7 @@ Search (ripgrep/grep, case-insensitive) per stage. Vector-DB client calls are th
 - **Query rewriting:** `condense`, `rewrite`, `standalone`, `history`, `expand`, `multi_query`, `hyde`, `variant` near the retrieval call [R006, R007].
 - **Prompt:** files/strings containing `context`, `참고`, `문서`, system-prompt files (`*.txt`, `*.md`, `prompts/` dirs, YAML prompt keys). Judge P001–P006 on the actual template text.
 - **Observability:** `langfuse`, `langsmith`, `opentelemetry`, `otel`, `trace`, `span`, `logger` near retrieval/generation. Verify chunk IDs/scores are actually recorded, not just "retrieved N docs" [O001].
-- **Evaluation:** `eval`, `golden`, `testset`, `dataset`, `ragas`, `judge` in code, CI configs (`.github/workflows`), and docs [V001–V003].
+- **Evaluation:** `eval`, `golden`, `testset`, `dataset`, `ragas`, `judge`, `unanswerable`, `refusal`, `answerable=false` in code, CI configs (`.github/workflows`), and docs [V001–V004].
 
 ## Interpreting hand-rolled code
 

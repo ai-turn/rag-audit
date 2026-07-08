@@ -16,7 +16,7 @@ The report includes a **Structure Score (0–100)**, computed mechanically from 
 - `PASS` earns the rule's weight; `FINDING` and `UNKNOWN` earn 0; `N/A` rules are excluded from the calculation entirely
 - **Score = round(100 × earned weight ÷ total weight of all non-N/A rules)**
 - Compute a per-category score with the same formula within each category — that is what shows *where* the pipeline is weak
-- Always report determination coverage alongside (e.g., "determined 26/30"); since UNKNOWN earns 0, the score is a lower bound when UNKNOWNs exist
+- Always report determination coverage alongside (e.g., "determined 26/<total>"); since UNKNOWN earns 0, the score is a lower bound when UNKNOWNs exist
 - Interpretation guide: 90+ structurally solid · 60–89 fix findings top-down · below 60 fundamental gaps
 
 Contents: C Chunking & Ingestion (C001–C005) · E Embedding (E001–E003) · R Retrieval (R001–R008) · P Prompt & Generation (P001–P006) · O Observability (O001–O004) · V Evaluation readiness (V001–V004)

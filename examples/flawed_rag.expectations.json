@@ -1,0 +1,27 @@
+{
+  "target": "examples/flawed_rag.py",
+  "must_find": [
+    "RAG-C001",
+    "RAG-C002",
+    "RAG-C004",
+    "RAG-E001",
+    "RAG-R002",
+    "RAG-R003",
+    "RAG-R004",
+    "RAG-R007",
+    "RAG-P001",
+    "RAG-P002",
+    "RAG-P003",
+    "RAG-P004",
+    "RAG-O001",
+    "RAG-O002"
+  ],
+  "must_not_find": [
+    "RAG-C003",
+    "RAG-E002",
+    "RAG-R001",
+    "RAG-R006",
+    "RAG-R008",
+    "RAG-P006"
+  ]
+}
